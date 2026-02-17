@@ -3,6 +3,7 @@ name = "voicebot-quick-starter"
 version = "0.1.0"
 description = "Voice AI Agent with Deepgram STT/TTS and Anthropic Claude"
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10"
