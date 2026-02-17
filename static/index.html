@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intake Session</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   RESET & TOKENS
+   ================================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-root: #08080c;
+  --bg-panel: #0c0c12;
+  --bg-surface: #101018;
+  --bg-inset: #14141e;
+  --bg-hover: #181824;
+  --border-dim: #1a1a28;
+  --border-mid: #24243a;
+  --border-focus: #c8965a;
+
+  --text-primary: #e8e6e1;
+  --text-secondary: #908e88;
+  --text-muted: #585660;
+  --text-faint: #3a3840;
+
+  --accent-warm: #c8965a;
+  --accent-warm-bg: rgba(200, 150, 90, 0.08);
+  --accent-warm-border: rgba(200, 150, 90, 0.2);
+  --accent-cool: #6a8caa;
+  --accent-cool-bg: rgba(106, 140, 170, 0.08);
+  --accent-cool-border: rgba(106, 140, 170, 0.18);
+
+  --green: #5a9a6a;
+  --green-bg: rgba(90, 154, 106, 0.1);
+  --green-border: rgba(90, 154, 106, 0.25);
+
+  --red-muted: #a05050;
+
+  --font-display: 'DM Serif Display', serif;
+  --font-body: 'Manrope', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-root);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ================================================================
+   LAYOUT -- TOP BAR + SPLIT PANELS
+   ================================================================ */
+.app {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: 48px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--border-dim);
+  background: var(--bg-panel);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.topbar-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-warm);
+}
+
+.topbar-role {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.topbar-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--border-dim);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.conn-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: background 0.3s;
+}
+
+.conn-indicator.connected {
+  background: var(--green);
+  box-shadow: 0 0 6px rgba(90, 154, 106, 0.4);
+}
+
+.conn-indicator.connecting {
+  background: var(--accent-warm);
+  animation: pulse-dot 1.2s ease infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.conn-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Main content area */
+.main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ================================================================
+   LEFT PANEL -- RECRUITER
+   ================================================================ */
+.panel-left {
+  width: 42%;
+  min-width: 340px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-dim);
+  background: var(--bg-panel);
+}
+
+.panel-header {
+  padding: 1.2rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border-dim);
+}
+
+.panel-eyebrow {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.panel-eyebrow.recruiter { color: var(--accent-warm); }
+.panel-eyebrow.hm { color: var(--accent-cool); }
+
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+/* Mic controls row */
+.mic-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-dim);
+}
+
+.btn-mic {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--border-mid);
+  background: var(--bg-inset);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-mic:hover {
+  border-color: var(--accent-warm-border);
+  color: var(--text-primary);
+}
+
+.btn-mic.active {
+  border-color: var(--accent-warm);
+  background: var(--accent-warm-bg);
+  color: var(--accent-warm);
+}
+
+.btn-mic.muted {
+  border-color: var(--red-muted);
+  color: var(--red-muted);
+}
+
+.btn-mic svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Audio level bars */
+.audio-level {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.audio-bar {
+  width: 3px;
+  background: var(--accent-warm);
+  border-radius: 1px;
+  opacity: 0.25;
+  transition: height 0.08s ease, opacity 0.08s ease;
+  height: 4px;
+}
+
+.audio-bar.active {
+  opacity: 0.85;
+}
+
+.mic-status-text {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-left: auto;
+}
+
+.btn-connect {
+  margin-left: auto;
+  padding: 0.45rem 1rem;
+  background: var(--accent-warm);
+  color: var(--bg-root);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.btn-connect:hover { opacity: 0.88; }
+.btn-connect:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.btn-connect.end {
+  background: var(--red-muted);
+  color: var(--text-primary);
+}
+
+/* Checklist section */
+.checklist-section {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.2rem 1.5rem;
+}
+
+.checklist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.checklist-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.checklist-progress {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.checklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  transition: border-color 0.25s, background 0.25s;
+  cursor: pointer;
+}
+
+.checklist-item:hover {
+  background: var(--bg-hover);
+}
+
+.checklist-item.checked {
+  border-color: var(--green-border);
+  background: var(--green-bg);
+}
+
+.check-box {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1.5px solid var(--border-mid);
+  background: var(--bg-inset);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.25s, background 0.25s;
+}
+
+.checklist-item.checked .check-box {
+  border-color: var(--green);
+  background: var(--green);
+}
+
+.check-box svg {
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.checklist-item.checked .check-box svg {
+  opacity: 1;
+}
+
+.check-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  transition: color 0.25s;
+}
+
+.checklist-item.checked .check-label {
+  color: var(--green);
+}
+
+.checklist-loading {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding: 1rem 0;
+}
+
+/* Suggest button section */
+.suggest-section {
+  border-top: 1px solid var(--border-dim);
+  padding: 1rem 1.5rem 1.2rem;
+}
+
+.btn-suggest {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-suggest:hover {
+  border-color: var(--accent-warm-border);
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.btn-suggest:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-suggest svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--accent-warm);
+}
+
+.suggestion-box {
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  background: var(--accent-warm-bg);
+  border: 1px solid var(--accent-warm-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  line-height: 1.55;
+  display: none;
+  animation: fadeInSuggestion 0.3s ease;
+}
+
+.suggestion-box.visible {
+  display: block;
+}
+
+@keyframes fadeInSuggestion {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.suggestion-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-warm);
+  margin-bottom: 0.35rem;
+}
+
+/* ================================================================
+   RIGHT PANEL -- HIRING MANAGER
+   ================================================================ */
+.panel-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-root);
+}
+
+/* HM visual header */
+.hm-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border-dim);
+}
+
+.hm-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--accent-cool-bg);
+  border: 1.5px solid var(--accent-cool-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hm-avatar svg {
+  width: 20px;
+  height: 20px;
+  color: var(--accent-cool);
+}
+
+.hm-info {
+  flex: 1;
+}
+
+.hm-name {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.hm-role-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+/* HM typing indicator */
+.hm-typing {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.hm-typing.active {
+  opacity: 1;
+  color: var(--accent-cool);
+}
+
+/* Transcript area */
+.transcript-section {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.2rem 1.5rem;
+}
+
+.transcript-header {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.transcript-log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.transcript-empty {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 2rem 0;
+}
+
+.msg {
+  display: flex;
+  gap: 0.65rem;
+  animation: msgIn 0.25s ease;
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.msg-marker {
+  width: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  min-height: 20px;
+}
+
+.msg-marker.recruiter { background: var(--accent-warm); }
+.msg-marker.hm { background: var(--accent-cool); }
+
+.msg-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.msg-speaker {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.msg-speaker.recruiter { color: var(--accent-warm); }
+.msg-speaker.hm { color: var(--accent-cool); }
+
+.msg-text {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.msg-text.streaming::after {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 14px;
+  background: var(--accent-cool);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink-cursor 0.7s step-end infinite;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Scrollbar */
+.transcript-section::-webkit-scrollbar,
+.checklist-section::-webkit-scrollbar {
+  width: 5px;
+}
+
+.transcript-section::-webkit-scrollbar-track,
+.checklist-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.transcript-section::-webkit-scrollbar-thumb,
+.checklist-section::-webkit-scrollbar-thumb {
+  background: var(--border-dim);
+  border-radius: 3px;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 768px) {
+  .main {
+    flex-direction: column;
+  }
+  .panel-left {
+    width: 100%;
+    min-width: 0;
+    max-height: 50vh;
+    border-right: none;
+    border-bottom: 1px solid var(--border-dim);
+  }
+  .panel-right {
+    flex: 1;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-label">Intake Session</span>
+      <span class="topbar-divider"></span>
+      <span class="topbar-role" id="topbarRole">--</span>
+    </div>
+    <div class="topbar-right">
+      <span class="conn-indicator" id="connDot"></span>
+      <span class="conn-label" id="connLabel">Disconnected</span>
+    </div>
+  </div>
+
+  <!-- Main Split -->
+  <div class="main">
+    <!-- LEFT: Recruiter Panel -->
+    <div class="panel-left">
+      <div class="panel-header">
+        <div class="panel-eyebrow recruiter">You</div>
+        <div class="panel-title">Recruiter</div>
+      </div>
+
+      <!-- Mic Row -->
+      <div class="mic-row">
+        <button class="btn-mic" id="btnMic" title="Toggle microphone" disabled>
+          <!-- mic icon -->
+          <svg id="micIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+          <!-- mic-off icon (hidden by default) -->
+          <svg id="micOffIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+            <line x1="1" y1="1" x2="23" y2="23"/>
+            <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/>
+            <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2c0 .77-.13 1.53-.36 2.24"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+
+        <div class="audio-level" id="userAudioLevel">
+          <div class="audio-bar"></div>
+          <div class="audio-bar"></div>
+          <div class="audio-bar"></div>
+          <div class="audio-bar"></div>
+          <div class="audio-bar"></div>
+          <div class="audio-bar"></div>
+          <div class="audio-bar"></div>
+          <div class="audio-bar"></div>
+        </div>
+
+        <button class="btn-connect" id="btnConnect" onclick="toggleConnection()">Connect</button>
+      </div>
+
+      <!-- Checklist -->
+      <div class="checklist-section">
+        <div class="checklist-header">
+          <span class="checklist-title">Information Gathered</span>
+          <span class="checklist-progress" id="checkProgress">0 / 0</span>
+        </div>
+        <div class="checklist-items" id="checklistItems">
+          <div class="checklist-loading">Connect to begin. Checklist will populate based on the role.</div>
+        </div>
+      </div>
+
+      <!-- Suggest Question -->
+      <div class="suggest-section">
+        <button class="btn-suggest" id="btnSuggest" onclick="suggestQuestion()" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          Suggest a Question
+        </button>
+        <div class="suggestion-box" id="suggestionBox">
+          <div class="suggestion-label">Suggested question</div>
+          <div id="suggestionText"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Hiring Manager Panel -->
+    <div class="panel-right">
+      <div class="hm-header">
+        <div class="hm-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div class="hm-info">
+          <div class="hm-name">Hiring Manager</div>
+          <div class="hm-role-label" id="hmRoleLabel">--</div>
+        </div>
+        <div class="hm-typing" id="hmTyping">Responding...</div>
+      </div>
+
+      <!-- Transcript -->
+      <div class="transcript-section" id="transcriptSection">
+        <div class="transcript-header">Live Transcript</div>
+        <div class="transcript-log" id="transcriptLog">
+          <div class="transcript-empty" id="transcriptEmpty">
+            Waiting for connection. The conversation will appear here in real time.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   STATE
+   ================================================================ */
+let sessionConfig = {};
+let sessionId = null;
+let pc = null;                // RTCPeerConnection
+let pcId = null;              // pc_id from server answer
+let dataChannel = null;
+let localStream = null;       // MediaStream from getUserMedia
+let isConnected = false;
+let isMuted = false;
+let pingInterval = null;
+let sseSource = null;
+
+// Audio analysis
+let userAnalyser = null;
+let userAudioCtx = null;
+let animFrame = null;
+
+// Transcript state
+let currentStreamingMsg = null;
+
+// Checklist
+let checklistData = [];       // [{id, label, checked}]
+let hmResponseCount = 0;      // Count HM responses for eval debounce
+let checklistIdleTimer = null; // 15s idle timer for eval
+
+/* ================================================================
+   INIT -- Load config, set up UI
+   ================================================================ */
+(async function init() {
+  try {
+    const res = await fetch('/api/config');
+    if (!res.ok) { window.location.href = '/'; return; }
+    sessionConfig = await res.json();
+    if (!sessionConfig.role) { window.location.href = '/'; return; }
+    document.getElementById('topbarRole').textContent = sessionConfig.role;
+    document.getElementById('hmRoleLabel').textContent = 'Hiring for: ' + sessionConfig.role;
+  } catch {
+    window.location.href = '/';
+  }
+})();
+
+/* ================================================================
+   CONNECTION
+   ================================================================ */
+async function toggleConnection() {
+  if (isConnected) {
+    await disconnect();
+  } else {
+    await connect();
+  }
+}
+
+async function connect() {
+  const btn = document.getElementById('btnConnect');
+  btn.disabled = true;
+  btn.textContent = 'Connecting...';
+  setConnState('connecting');
+
+  try {
+    // 1. Create session
+    const startRes = await fetch('/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enableDefaultIceServers: true })
+    });
+    const startData = await startRes.json();
+    sessionId = startData.sessionId;
+
+    const iceServers = startData.iceConfig
+      ? startData.iceConfig.iceServers
+      : [{ urls: ['stun:stun.l.google.com:19302'] }];
+
+    // 2. Get mic
+    localStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        sampleRate: 16000
+      },
+      video: false
+    });
+
+    // 3. Create PeerConnection
+    pc = new RTCPeerConnection({ iceServers: iceServers });
+
+    // Add audio transceiver (sendrecv)
+    const audioTrack = localStream.getAudioTracks()[0];
+    pc.addTransceiver(audioTrack, { direction: 'sendrecv' });
+    // Add video transceiver (recvonly) -- server expects 3 transceivers
+    pc.addTransceiver('video', { direction: 'recvonly' });
+    // Add screen share transceiver (recvonly)
+    pc.addTransceiver('video', { direction: 'recvonly' });
+
+    // ICE candidate trickle
+    const pendingCandidates = [];
+    let canTrickle = false;
+
+    pc.onicecandidate = function(event) {
+      if (event.candidate) {
+        const candidateData = {
+          candidate: event.candidate.candidate,
+          sdp_mid: event.candidate.sdpMid,
+          sdp_mline_index: event.candidate.sdpMLineIndex
+        };
+        if (canTrickle && pcId) {
+          sendIceCandidate(candidateData);
+        } else {
+          pendingCandidates.push(candidateData);
+        }
+      }
+    };
+
+    pc.onconnectionstatechange = function() {
+      if (pc.connectionState === 'connected') {
+        setConnState('connected');
+        isConnected = true;
+        btn.disabled = false;
+        btn.textContent = 'End Session';
+        btn.classList.add('end');
+        document.getElementById('btnMic').disabled = false;
+        document.getElementById('btnMic').classList.add('active');
+        document.getElementById('btnSuggest').disabled = false;
+        startSSE();
+        generateChecklist();
+      } else if (pc.connectionState === 'failed' || pc.connectionState === 'closed') {
+        handleDisconnect();
+      }
+    };
+
+    // Data channel for keepalive
+    pc.ondatachannel = function(event) {
+      dataChannel = event.channel;
+      dataChannel.onopen = function() {
+        pingInterval = setInterval(function() {
+          if (dataChannel && dataChannel.readyState === 'open') {
+            dataChannel.send('ping' + Date.now());
+          }
+        }, 1000);
+      };
+    };
+
+    // 4. Create and send offer
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+
+    const offerUrl = sessionId
+      ? '/sessions/' + sessionId + '/api/offer'
+      : '/api/offer';
+
+    const offerRes = await fetch(offerUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sdp: pc.localDescription.sdp,
+        type: pc.localDescription.type
+      })
+    });
+
+    const answer = await offerRes.json();
+    pcId = answer.pc_id;
+
+    await pc.setRemoteDescription(new RTCSessionDescription({
+      sdp: answer.sdp,
+      type: answer.type
+    }));
+
+    // Send any pending ICE candidates
+    canTrickle = true;
+    for (const c of pendingCandidates) {
+      await sendIceCandidate(c);
+    }
+
+    // Set up user audio analysis
+    setupUserAudioAnalysis(localStream);
+
+  } catch (err) {
+    console.error('Connection failed:', err);
+    btn.disabled = false;
+    btn.textContent = 'Connect';
+    setConnState('disconnected');
+  }
+}
+
+async function sendIceCandidate(candidateData) {
+  const url = sessionId
+    ? '/sessions/' + sessionId + '/api/offer'
+    : '/api/offer';
+  try {
+    await fetch(url, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        candidate: candidateData.candidate,
+        sdp_mid: candidateData.sdp_mid,
+        sdp_mline_index: candidateData.sdp_mline_index,
+        sdpMid: candidateData.sdp_mid,
+        sdpMLineIndex: candidateData.sdp_mline_index,
+        pc_id: pcId,
+        candidates: [{
+          candidate: candidateData.candidate,
+          sdp_mid: candidateData.sdp_mid,
+          sdp_mline_index: candidateData.sdp_mline_index
+        }]
+      })
+    });
+  } catch (e) {
+    console.warn('ICE trickle failed:', e);
+  }
+}
+
+async function disconnect() {
+  if (pingInterval) { clearInterval(pingInterval); pingInterval = null; }
+  if (sseSource) { sseSource.close(); sseSource = null; }
+  if (dataChannel) { dataChannel.close(); dataChannel = null; }
+  if (pc) { pc.close(); pc = null; }
+  if (localStream) {
+    localStream.getTracks().forEach(function(t) { t.stop(); });
+    localStream = null;
+  }
+  handleDisconnect();
+}
+
+function handleDisconnect() {
+  isConnected = false;
+  pcId = null;
+  setConnState('disconnected');
+  const btn = document.getElementById('btnConnect');
+  btn.disabled = false;
+  btn.textContent = 'Connect';
+  btn.classList.remove('end');
+  document.getElementById('btnMic').disabled = true;
+  document.getElementById('btnMic').classList.remove('active');
+  document.getElementById('btnSuggest').disabled = true;
+  if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+}
+
+/* ================================================================
+   MIC TOGGLE
+   ================================================================ */
+document.getElementById('btnMic').addEventListener('click', function() {
+  if (!localStream) return;
+  const audioTrack = localStream.getAudioTracks()[0];
+  if (!audioTrack) return;
+
+  isMuted = !isMuted;
+  audioTrack.enabled = !isMuted;
+
+  const btnMic = document.getElementById('btnMic');
+  const micIcon = document.getElementById('micIcon');
+  const micOffIcon = document.getElementById('micOffIcon');
+
+  if (isMuted) {
+    btnMic.classList.remove('active');
+    btnMic.classList.add('muted');
+    micIcon.style.display = 'none';
+    micOffIcon.style.display = 'block';
+  } else {
+    btnMic.classList.remove('muted');
+    btnMic.classList.add('active');
+    micIcon.style.display = 'block';
+    micOffIcon.style.display = 'none';
+  }
+});
+
+/* ================================================================
+   CONNECTION STATE UI
+   ================================================================ */
+function setConnState(state) {
+  const dot = document.getElementById('connDot');
+  const label = document.getElementById('connLabel');
+  dot.className = 'conn-indicator';
+  if (state === 'connected') {
+    dot.classList.add('connected');
+    label.textContent = 'Connected';
+  } else if (state === 'connecting') {
+    dot.classList.add('connecting');
+    label.textContent = 'Connecting';
+  } else {
+    label.textContent = 'Disconnected';
+  }
+}
+
+/* ================================================================
+   AUDIO ANALYSIS (level meters)
+   ================================================================ */
+function setupUserAudioAnalysis(stream) {
+  userAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const source = userAudioCtx.createMediaStreamSource(stream);
+  userAnalyser = userAudioCtx.createAnalyser();
+  userAnalyser.fftSize = 64;
+  source.connect(userAnalyser);
+  startAudioVisualization();
+}
+
+function startAudioVisualization() {
+  if (animFrame) return;
+  const userBars = document.querySelectorAll('#userAudioLevel .audio-bar');
+
+  function draw() {
+    animFrame = requestAnimationFrame(draw);
+
+    // User level
+    if (userAnalyser && !isMuted) {
+      const data = new Uint8Array(userAnalyser.frequencyBinCount);
+      userAnalyser.getByteFrequencyData(data);
+      const barCount = userBars.length;
+      for (let i = 0; i < barCount; i++) {
+        const idx = Math.floor(i * data.length / barCount);
+        const val = data[idx] / 255;
+        const h = Math.max(4, val * 28);
+        userBars[i].style.height = h + 'px';
+        userBars[i].classList.toggle('active', val > 0.15);
+      }
+    } else {
+      userBars.forEach(function(b) { b.style.height = '4px'; b.classList.remove('active'); });
+    }
+  }
+  draw();
+}
+
+/* ================================================================
+   SSE -- Live Transcript
+   ================================================================ */
+function startSSE() {
+  if (sseSource) sseSource.close();
+  sseSource = new EventSource('/api/transcript/stream');
+
+  sseSource.addEventListener('user_speech', function(e) {
+    const data = JSON.parse(e.data);
+    addTranscriptMessage('recruiter', 'You', data.text);
+    // Show "Thinking..." while waiting for LLM to start responding
+    const typing = document.getElementById('hmTyping');
+    typing.textContent = 'Thinking...';
+    typing.classList.add('active');
+  });
+
+  sseSource.addEventListener('hm_speech_start', function(e) {
+    // Switch from "Thinking..." to "Responding..." once LLM starts streaming
+    const typing = document.getElementById('hmTyping');
+    typing.textContent = 'Responding...';
+    typing.classList.add('active');
+    currentStreamingMsg = addTranscriptMessage('hm', 'Hiring Manager', '', true);
+  });
+
+  sseSource.addEventListener('hm_speech_chunk', function(e) {
+    const data = JSON.parse(e.data);
+    if (currentStreamingMsg) {
+      const textEl = currentStreamingMsg.querySelector('.msg-text');
+      textEl.textContent += data.text;
+      scrollTranscript();
+    }
+  });
+
+  sseSource.addEventListener('hm_speech_end', function(e) {
+    if (currentStreamingMsg) {
+      const textEl = currentStreamingMsg.querySelector('.msg-text');
+      textEl.classList.remove('streaming');
+      currentStreamingMsg = null;
+    }
+    document.getElementById('hmTyping').classList.remove('active');
+    // Debounced checklist evaluation: every 3rd HM response OR after 15s idle
+    hmResponseCount++;
+    if (checklistIdleTimer) clearTimeout(checklistIdleTimer);
+    if (hmResponseCount % 3 === 0) {
+      evaluateChecklist();
+    } else {
+      checklistIdleTimer = setTimeout(function() { evaluateChecklist(); }, 15000);
+    }
+  });
+
+  sseSource.addEventListener('checklist_update', function(e) {
+    const data = JSON.parse(e.data);
+    updateChecklistFromServer(data.items);
+  });
+
+  sseSource.onerror = function() {
+    // SSE will auto-reconnect
+  };
+}
+
+function addTranscriptMessage(type, speaker, text, streaming) {
+  const log = document.getElementById('transcriptLog');
+  const empty = document.getElementById('transcriptEmpty');
+  if (empty) empty.remove();
+
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  msg.innerHTML =
+    '<div class="msg-marker ' + type + '"></div>' +
+    '<div class="msg-content">' +
+      '<div class="msg-speaker ' + type + '">' + speaker + '</div>' +
+      '<div class="msg-text' + (streaming ? ' streaming' : '') + '">' + escapeHtml(text) + '</div>' +
+    '</div>';
+
+  log.appendChild(msg);
+  scrollTranscript();
+  return msg;
+}
+
+function scrollTranscript() {
+  const section = document.getElementById('transcriptSection');
+  section.scrollTop = section.scrollHeight;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* ================================================================
+   CHECKLIST
+   ================================================================ */
+async function generateChecklist() {
+  const container = document.getElementById('checklistItems');
+  container.innerHTML = '<div class="checklist-loading">Generating checklist for this role...</div>';
+
+  try {
+    const res = await fetch('/api/checklist/generate', { method: 'POST' });
+    if (!res.ok) throw new Error('Failed to generate checklist');
+    const data = await res.json();
+    checklistData = data.items.map(function(item, i) {
+      return { id: i, label: item, checked: false };
+    });
+    renderChecklist();
+  } catch (e) {
+    container.innerHTML = '<div class="checklist-loading">Failed to generate checklist.</div>';
+  }
+}
+
+function renderChecklist() {
+  const container = document.getElementById('checklistItems');
+  container.innerHTML = '';
+  let checkedCount = 0;
+
+  checklistData.forEach(function(item) {
+    if (item.checked) checkedCount++;
+
+    const el = document.createElement('div');
+    el.className = 'checklist-item' + (item.checked ? ' checked' : '');
+    el.setAttribute('data-id', item.id);
+    el.innerHTML =
+      '<div class="check-box">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">' +
+          '<polyline points="20 6 9 17 4 12"/>' +
+        '</svg>' +
+      '</div>' +
+      '<span class="check-label">' + escapeHtml(item.label) + '</span>';
+
+    el.addEventListener('click', function() {
+      item.checked = !item.checked;
+      renderChecklist();
+    });
+
+    container.appendChild(el);
+  });
+
+  document.getElementById('checkProgress').textContent = checkedCount + ' / ' + checklistData.length;
+}
+
+async function evaluateChecklist() {
+  if (!checklistData.length) return;
+
+  try {
+    const res = await fetch('/api/checklist/evaluate', { method: 'POST' });
+    if (!res.ok) return;
+    const data = await res.json();
+    updateChecklistFromServer(data.items);
+  } catch (e) {
+    // Non-critical, ignore
+  }
+}
+
+function updateChecklistFromServer(serverItems) {
+  if (!serverItems || !serverItems.length) return;
+  let changed = false;
+
+  serverItems.forEach(function(si) {
+    const match = checklistData.find(function(c) {
+      return c.label === si.label || c.id === si.id;
+    });
+    if (match && si.checked && !match.checked) {
+      match.checked = true;
+      changed = true;
+    }
+  });
+
+  if (changed) renderChecklist();
+}
+
+/* ================================================================
+   SUGGEST QUESTION
+   ================================================================ */
+async function suggestQuestion() {
+  const btn = document.getElementById('btnSuggest');
+  const box = document.getElementById('suggestionBox');
+  const textEl = document.getElementById('suggestionText');
+
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/suggest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        checklist: checklistData
+      })
+    });
+
+    if (!res.ok) throw new Error('Failed to get suggestion');
+    const data = await res.json();
+
+    textEl.textContent = data.suggestion;
+    box.classList.add('visible');
+
+    // Auto-hide after 20 seconds
+    setTimeout(function() {
+      box.classList.remove('visible');
+    }, 20000);
+
+  } catch (e) {
+    textEl.textContent = 'Could not generate a suggestion right now.';
+    box.classList.add('visible');
+  }
+
+  btn.disabled = false;
+}
+</script>
+</body>
+</html>

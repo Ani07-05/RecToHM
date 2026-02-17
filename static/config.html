@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recruiter Intake Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #08080c;
+    --bg-card: #0e0e14;
+    --bg-input: #12121a;
+    --border-subtle: #1a1a26;
+    --border-focus: #c8965a;
+    --text-primary: #e8e6e1;
+    --text-secondary: #7a7880;
+    --text-muted: #4a4850;
+    --accent-warm: #c8965a;
+    --accent-warm-dim: rgba(200, 150, 90, 0.12);
+    --font-display: 'DM Serif Display', serif;
+    --font-body: 'Manrope', sans-serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Subtle grain texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    width: 100%;
+  }
+
+  .eyebrow {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-warm);
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.15;
+    margin-bottom: 0.6rem;
+  }
+
+  .subtitle {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 2.8rem;
+    max-width: 380px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 2rem;
+  }
+
+  .field {
+    margin-bottom: 1.6rem;
+  }
+
+  .field:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease;
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--border-focus);
+  }
+
+  input[type="text"]::placeholder {
+    color: var(--text-muted);
+  }
+
+  .hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+    line-height: 1.5;
+  }
+
+  .btn-primary {
+    display: block;
+    width: 100%;
+    margin-top: 2rem;
+    padding: 0.85rem 1.2rem;
+    background: var(--accent-warm);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.15s ease, transform 0.1s ease;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.92;
+  }
+
+  .btn-primary:active {
+    transform: scale(0.99);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .status-msg {
+    text-align: center;
+    margin-top: 0.8rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    min-height: 1.2em;
+  }
+
+  .status-msg.error {
+    color: #c25050;
+  }
+
+  .footer-note {
+    margin-top: 2rem;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <p class="eyebrow">Intake Call Trainer</p>
+  <h1>Recruiter Practice</h1>
+  <p class="subtitle">
+    Practice your intake calls against an AI hiring manager who struggles
+    to articulate requirements. Enter the role below to begin a session.
+  </p>
+
+  <div class="card">
+    <div class="field">
+      <label for="roleName">Role Title</label>
+      <input type="text" id="roleName" placeholder="e.g. Senior Backend Engineer" autocomplete="off" autofocus>
+      <p class="hint">The position the hiring manager is looking to fill.</p>
+    </div>
+  </div>
+
+  <button class="btn-primary" id="startBtn" onclick="startSession()">Begin Session</button>
+  <div id="statusMsg" class="status-msg"></div>
+
+  <p class="footer-note">
+    You will speak with the hiring manager via voice. A dynamic checklist
+    will track the information you have gathered during the call.
+  </p>
+</div>
+
+<script>
+  const roleInput = document.getElementById('roleName');
+  const startBtn = document.getElementById('startBtn');
+  const statusMsg = document.getElementById('statusMsg');
+
+  roleInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') startSession();
+  });
+
+  async function startSession() {
+    const role = roleInput.value.trim();
+    if (!role) {
+      statusMsg.textContent = 'Please enter a role title.';
+      statusMsg.className = 'status-msg error';
+      roleInput.focus();
+      return;
+    }
+
+    startBtn.disabled = true;
+    statusMsg.textContent = 'Preparing session...';
+    statusMsg.className = 'status-msg';
+
+    try {
+      const res = await fetch('/api/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: role })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || 'Failed to create session');
+      }
+
+      window.location.href = '/session';
+    } catch (e) {
+      statusMsg.textContent = e.message;
+      statusMsg.className = 'status-msg error';
+      startBtn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "voicebot-quick-starter"
+version = "0.1.0"
+description = "Voice AI Agent with Deepgram STT/TTS and Anthropic Claude"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pipecat-ai = {version = "0.0.101", extras = ["deepgram", "anthropic", "silero", "webrtc", "runner"]}
+python-dotenv = "^1.0.0"
+loguru = "^0.7.0"
+fastapi = "^0.115.0"
+uvicorn = "^0.32.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
